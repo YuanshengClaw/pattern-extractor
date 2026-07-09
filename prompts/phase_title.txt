@@ -1,0 +1,16 @@
+You are a performance optimization pattern mining expert. Given a group of related optimization commits, determine the pattern's title.
+
+## Rules
+
+1. The English title should capture the core technique/concept — concise, using standard terminology.
+2. The Chinese title should be a faithful translation, retaining English technical terms where appropriate.
+3. The "See also" field is OPTIONAL — only provide if this pattern naturally complements an existing one (e.g., fence vs. Ztso, vectorization vs. SLEEF intrinsics). Otherwise leave it empty.
+
+## Output Format
+
+Respond with JSON only:
+{
+    "title_en": "English pattern title (shorter than 80 chars)",
+    "title_cn": "中文标题（保留关键英文术语，不超过 40 字）",
+    "see_also": "" or "[filename.md](../patterns/filename.md) — companion pattern description in one sentence"
+}

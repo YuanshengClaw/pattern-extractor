@@ -1,0 +1,24 @@
+{
+    "llm": {
+        "model": "gpt-4o",
+        "base_url": "https://api.openai.com/v1",
+        "api_key": "sk-your-api-key",
+        "temperature": 0.1,
+        "max_tokens": 4096
+    },
+    "prompt_dir": "prompts",
+    "language": "zh",
+    "pipeline": {
+        "min_prs_for_pattern": 1,
+        "max_prs_for_llm_context": 8,
+        "review_before_publish": true
+    },
+    "output": {
+        "pattern_dir": "output/patterns",
+        "index_dir": "existing_patterns",
+        "triggers_dir": "triggers"
+    },
+    "project": {
+        "name": "OpenJDK"
+    }
+}
