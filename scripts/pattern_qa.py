@@ -83,7 +83,8 @@ def check_when_signals(text: str) -> dict:
     }
 
 
-def check_why_not_when(text: str) -> dict:
+def check_why_not_when(text: str,
+                       overlap_threshold: float = 0.7) -> dict:
     """§5 Check: Why section doesn't just restate When section content."""
     # Extract Why section
     why_match = re.search(r'## Why this is slow.*?\n(.*?)(?=\n## )', text, re.DOTALL)
@@ -111,7 +112,7 @@ def check_why_not_when(text: str) -> dict:
     when_words = set(when_text.split())
     if when_words and len(why_words) > 10:
         overlap = len(why_words & when_words) / len(why_words)
-        too_similar = overlap > 0.7
+        too_similar = overlap > overlap_threshold
     else:
         too_similar = False
 
@@ -190,7 +191,7 @@ def check_present_length(text: str) -> dict:
     count = len(sentences)
 
     return {
-        "check": "§8 Presenting length (3-5 sentences)",
+        "check": "§8 Presenting length (2-8 sentences)",
         "pass": 2 <= count <= 8,
         "detail": f"~{count} sentence(s) found" if count > 0 else "No content",
     }
@@ -230,13 +231,14 @@ def check_related_dedup(text: str) -> dict:
 # ── Full QA Suite ─────────────────────────────────────────────────────────────
 
 
-def run_all_checks(text: str) -> list[dict]:
+def run_all_checks(text: str,
+                   overlap_threshold: float = 0.7) -> list[dict]:
     """Run all QA checks and return results."""
     checks = [
         check_license(text),
         check_title(text),
         check_when_signals(text),
-        check_why_not_when(text),
+        check_why_not_when(text, overlap_threshold=overlap_threshold),
         check_fix_code_blocks(text),
         check_verify_completeness(text),
         check_present_length(text),

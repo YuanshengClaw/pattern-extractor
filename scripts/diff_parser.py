@@ -206,8 +206,8 @@ def extract_code_blocks_for_pattern(commit: dict, max_files: int = 5) -> dict:
 
 
 def summarize_diffs_for_group(commits: list[dict],
-                             max_files_per_commit: int = 3,
-                             max_commits: int = 8) -> str:
+                             max_files_per_commit: int = 50,
+                             max_commits: int = 50) -> str:
     """Summarize diffs across multiple commits for LLM pattern generation.
 
     Produces a compact text block that shows the key code changes across

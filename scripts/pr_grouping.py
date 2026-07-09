@@ -12,14 +12,6 @@ from typing import Any
 
 from .llm_client import LLMClient, LLMError
 
-# Minimum PRs to form a pattern (configurable, default threshold)
-MIN_PRS_FOR_PATTERN = 2
-
-# Quantization threshold: if a single category has more than this many PRs,
-# trigger LLM secondary clustering to split into finer sub-categories.
-MAX_PRS_BEFORE_SUBCLUSTER = 12
-
-
 def group_by_category(commits: list[dict]) -> dict[str, list[dict]]:
     """Group commits by their 'idea' field (from CSV's Idea column).
 
@@ -33,12 +25,15 @@ def group_by_category(commits: list[dict]) -> dict[str, list[dict]]:
 
 
 def compute_group_stats(groups: dict[str, list[dict]],
-                       min_prs: int = MIN_PRS_FOR_PATTERN) -> list[dict]:
+                       min_prs: int = 1,
+                       max_prs_before_subcluster: int = 100) -> list[dict]:
     """Convert groups to sorted list of group info dicts.
 
     Args:
         groups: Commit dicts grouped by idea category.
         min_prs: Minimum PRs required for pattern_ready. Override via config.
+        max_prs_before_subcluster: If a group exceeds this, flag for LLM
+                                   subclustering. Override via config.
 
     Returns:
         [
@@ -47,7 +42,7 @@ def compute_group_stats(groups: dict[str, list[dict]],
                 "count": 5,
                 "commits": [...],
                 "pattern_ready": True,   # count >= min_prs
-                "needs_subcluster": False # count <= MAX_PRS_BEFORE_SUBCLUSTER
+                "needs_subcluster": False # count <= max_prs_before_subcluster
             },
             ...
         ]
@@ -59,7 +54,7 @@ def compute_group_stats(groups: dict[str, list[dict]],
             "count": len(comms),
             "commits": comms,
             "pattern_ready": len(comms) >= min_prs,
-            "needs_subcluster": len(comms) > MAX_PRS_BEFORE_SUBCLUSTER,
+            "needs_subcluster": len(comms) > max_prs_before_subcluster,
         })
     stats.sort(key=lambda s: s["count"], reverse=True)
     return stats
@@ -144,7 +139,6 @@ def extract_pr_url(commit: dict) -> str:
         repo = commit.get("repo", "")
         if owner and repo:
             return f"https://github.com/{owner}/{repo}/pull/{m.group(1)}"
-        return f"https://github.com/openjdk/jdk/pull/{m.group(1)}"
     return url
 
 

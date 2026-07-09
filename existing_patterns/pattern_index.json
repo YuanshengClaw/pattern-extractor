@@ -2,8 +2,8 @@
   "version": "1.0",
   "patterns": {
     "leverage_bit_manipulation_extensions.md": {
-      "title_en": "Utilize RISC-V Bit Manipulation Extensions",
-      "title_cn": "利用RISC-V位操作扩展",
+      "title_en": "Leveraging RISC-V Bit Manipulation Extensions",
+      "title_cn": "利用 RISC-V 位操作扩展",
       "category": "Leverage Bit Manipulation Extensions",
       "pr_ids": [
         "(3d9a89b)",
@@ -14,7 +14,16 @@
         "(6fb7bdc)",
         "(b70244f)",
         "(4d10d4a)",
-        "(90e8b8c)"
+        "(90e8b8c)",
+        "3d9a89b05733",
+        "daa58db486c3",
+        "997636760e2d",
+        "e126129d7612",
+        "a6ecdf29e34d",
+        "6fb7bdc96d03",
+        "b70244ff7a04",
+        "4d10d4ad8494",
+        "90e8b8cdaeb7"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/3d9a89b05733f6787900ea7034aab0471e065946",
@@ -31,10 +40,15 @@
         "利用位操作扩展指令替换通用序列 / Replace Generic Sequences with Bit Manipulation Extension Instructions",
         "利用位操作扩展高效实现位旋转 / Efficiently Implement Bit Rotation with Bit Manipulation Extensions",
         "利用位操作扩展内化位计数函数 / Intrinsify Bit-Count Functions with Bit Manipulation Extensions",
-        "利用 Zba 扩展实现指令融合 / Fuse Instructions Using the Zba Extension"
+        "利用 Zba 扩展实现指令融合 / Fuse Instructions Using the Zba Extension",
+        "使用整数最小最大指令 / Use Integer Min/Max Instructions",
+        "提供并优化旋转操作 / Provide and Optimize Rotation Operations",
+        "使用组合移位加指令 / Use Combined Shift and Addition Instructions",
+        "使用扩展指令优化字节/半字操作 / Use Extension Instructions for Byte/Half-Word Operations",
+        "内联化位操作函数 / Intrinsify Bit Operation Functions"
       ],
       "created": "2026-07-08T09:00:14Z",
-      "updated": "2026-07-08T09:00:14Z"
+      "updated": "2026-07-09T04:22:06Z"
     },
     "arithmetic_operation_fusion.md": {
       "title_en": "Arithmetic Operation Fusion",
@@ -44,7 +58,11 @@
         "(2141751)",
         "(10d0706)",
         "(2469e92)",
-        "(2cdcc41)"
+        "(2cdcc41)",
+        "21417518a9e8",
+        "10d070668c24",
+        "2469e92d8c49",
+        "2cdcc4150bc5"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/21417518a9e826973c316d3328e069b7535bb23c",
@@ -56,19 +74,26 @@
         "组合取反与符号扩展 / Combine Negation with Sign Extension",
         "代数简化：消除双重取反 / Algebraic Simplification: Remove Double Negation",
         "组合加倍与移位 / Combine Doubling with Shift",
-        "将取反折叠进乘法 / Fold Negation into Multiplication"
+        "将取反折叠进乘法 / Fold Negation into Multiplication",
+        "合并取反与符号扩展 / Combine negation and sign extension",
+        "消除双重取反与常量加法 / Remove double negation with addition",
+        "合并加倍与移位 / Combine doubling with shift",
+        "将取反折叠进乘法 / Fold negation into multiplication"
       ],
       "created": "2026-07-08T09:04:00Z",
-      "updated": "2026-07-08T09:04:00Z"
+      "updated": "2026-07-09T04:25:03Z"
     },
     "risc_v_compressed_instruction_utilization.md": {
-      "title_en": "Enable Compressed Instructions on RISC-V 64-bit",
-      "title_cn": "在 RISC-V 64 位架构上启用压缩指令",
+      "title_en": "RISC-V Compressed Instruction Utilization",
+      "title_cn": "",
       "category": "RISC-V Compressed Instruction Utilization",
       "pr_ids": [
         "#71105",
         "#47560",
-        "#71105"
+        "#71105",
+        "9859b436430a",
+        "b9ef0633f611",
+        "924fe98902cd"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/9859b436430aac382b337964a1b380bc4bfcda70",
@@ -83,15 +108,17 @@
         "Add Debug Flag for Compression Control / 添加调试标志控制压缩"
       ],
       "created": "2026-07-08T09:08:14Z",
-      "updated": "2026-07-08T09:08:14Z"
+      "updated": "2026-07-09T03:59:07Z"
     },
     "immediate_constant_materialization.md": {
-      "title_en": "Synthesizing Constants via Instruction Sequences",
-      "title_cn": "通过指令序列合成常量",
+      "title_en": "Immediate Constant Materialization",
+      "title_cn": "",
       "category": "Immediate Constant Materialization",
       "pr_ids": [
         "(dfd2e80)",
-        "(d376248)"
+        "(d376248)",
+        "dfd2e8027c77",
+        "d37624881f60"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/dfd2e8027c77363d7b8fa7fb23e9979ba6c1b167",
@@ -103,15 +130,17 @@
         "Leveraging Specific Architecture Instructions / 利用特定架构指令"
       ],
       "created": "2026-07-08T09:12:06Z",
-      "updated": "2026-07-08T09:12:06Z"
+      "updated": "2026-07-09T03:59:09Z"
     },
     "leveraging_fclass_for_efficient_floating_point_classification.md": {
-      "title_en": "Leveraging FCLASS for Efficient Floating-Point Classification on RISC-V",
-      "title_cn": "利用 FCLASS 指令在 RISC-V 上进行高效浮点分类",
+      "title_en": "Leveraging FCLASS for Efficient Floating-Point Classification",
+      "title_cn": "",
       "category": "Leveraging FCLASS for Efficient Floating-Point Classification",
       "pr_ids": [
         "(34aef89)",
-        "(320df53)"
+        "(320df53)",
+        "34aef8936657",
+        "320df537cc55"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/34aef8936657a5c4f6a561aeb959c2bb4eebae30",
@@ -122,15 +151,17 @@
         "利用 FCLASSD 优化无穷大测试 / Optimizing Infinity Tests with FCLASSD"
       ],
       "created": "2026-07-08T09:15:39Z",
-      "updated": "2026-07-08T09:15:39Z"
+      "updated": "2026-07-09T03:59:10Z"
     },
     "precise_memory_barrier_selection.md": {
-      "title_en": "Precise Memory Barrier Selection with Fine-Grained FENCE on RISC-V",
-      "title_cn": "RISC-V 上使用细粒度 FENCE 指令的精确内存屏障选择",
+      "title_en": "Precise Memory Barrier Selection",
+      "title_cn": "",
       "category": "Precise Memory Barrier Selection",
       "pr_ids": [
         "(ab7c827)",
-        "(b5b9e3c)"
+        "(b5b9e3c)",
+        "ab7c8279a087",
+        "b5b9e3cdfee8"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/ab7c8279a087fb4b722d34859cae4ecb7b76d4ef",
@@ -143,15 +174,17 @@
         "硬件特性利用的汇编宏 / Assembly Macros for Hardware Feature Utilization"
       ],
       "created": "2026-07-08T09:20:40Z",
-      "updated": "2026-07-08T09:20:40Z"
+      "updated": "2026-07-09T03:59:12Z"
     },
     "register_transfer_and_constant_zero_optimization.md": {
-      "title_en": "RISC-V Float Register Move Optimization",
-      "title_cn": "RISC-V 浮点寄存器移动优化",
+      "title_en": "Register Transfer and Constant Zero Optimization",
+      "title_cn": "",
       "category": "Register Transfer and Constant Zero Optimization",
       "pr_ids": [
         "(e2cfc1e)",
-        "(fcc036f)"
+        "(fcc036f)",
+        "e2cfc1eb3aff",
+        "fcc036f03b07"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/e2cfc1eb3affe8bcdfeca4a9f0a2d7902dbb940f",
@@ -164,11 +197,11 @@
         "编译器在 SSA 阶段选择正确的浮点移动指令 / Correct float move instruction selection in compiler SSA phase"
       ],
       "created": "2026-07-08T09:23:48Z",
-      "updated": "2026-07-08T09:23:48Z"
+      "updated": "2026-07-09T03:59:14Z"
     },
     "software_synthesis_of_unavailable_instructions.md": {
-      "title_en": "Software Synthesis for Unavailable Instructions",
-      "title_cn": "软件合成不可用指令",
+      "title_en": "Software Synthesis of Unavailable Instructions",
+      "title_cn": "",
       "category": "Software Synthesis of Unavailable Instructions",
       "pr_ids": [
         "(d88f93f)",
@@ -189,14 +222,15 @@
         "Synthesis of Correct Instruction Sequences / 构建符合规范的指令合成序列"
       ],
       "created": "2026-07-08T09:27:29Z",
-      "updated": "2026-07-08T13:07:27Z"
+      "updated": "2026-07-09T03:59:16Z"
     },
     "bit_manipulation_extension_for_crypto_primitives.md": {
-      "title_en": "Using RISC-V native rotation instructions for crypto primitives",
-      "title_cn": "使用 RISC-V 原生旋转指令优化加密原语",
+      "title_en": "Bit Manipulation Extension for Crypto Primitives",
+      "title_cn": "",
       "category": "Bit Manipulation Extension for Crypto Primitives",
       "pr_ids": [
-        "(3659b87)"
+        "(3659b87)",
+        "3659b8756a2b"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/3659b8756a2b81766e589e34d4fe9613b5917de0"
@@ -208,14 +242,15 @@
         "优化立即数旋转的特殊情况 / Optimize special cases for immediate rotation"
       ],
       "created": "2026-07-08T09:30:54Z",
-      "updated": "2026-07-08T09:30:54Z"
+      "updated": "2026-07-09T03:59:17Z"
     },
     "branch_elimination_with_conditional_moves.md": {
-      "title_en": "Zicond-based Branch Elimination on RISC-V",
-      "title_cn": "基于 Zicond 的 RISC-V 分支消除",
+      "title_en": "Branch Elimination with Conditional Moves",
+      "title_cn": "",
       "category": "Branch Elimination with Conditional Moves",
       "pr_ids": [
-        "#75350"
+        "#75350",
+        "ca94cf12479f"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/ca94cf12479f2a2c065215218f6a3f5fc7bfe1f4"
@@ -227,14 +262,15 @@
         "对 CondSelect 进行常量传播等优化"
       ],
       "created": "2026-07-08T09:34:07Z",
-      "updated": "2026-07-08T09:34:07Z"
+      "updated": "2026-07-09T03:59:19Z"
     },
     "code_size_reduction_via_simplifications.md": {
-      "title_en": "Generic Simplifications on RISC-V 64",
-      "title_cn": "RISC-V 64 通用简化",
+      "title_en": "Code Size Reduction via Simplifications",
+      "title_cn": "",
       "category": "Code Size Reduction via Simplifications",
       "pr_ids": [
-        "(1231411)"
+        "(1231411)",
+        "123141166bf7"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/123141166bf77b60062d830224b85131791647fd"
@@ -246,14 +282,15 @@
         "Address Computation Simplification / 地址计算简化"
       ],
       "created": "2026-07-08T09:36:49Z",
-      "updated": "2026-07-08T09:36:49Z"
+      "updated": "2026-07-09T03:59:21Z"
     },
     "early_scheduling_of_non_faulting_operations.md": {
-      "title_en": "Early Scheduling of Non-Faulting Operations via EarlyOk",
-      "title_cn": "通过 EarlyOk 实现非故障操作的早期调度",
+      "title_en": "Early Scheduling of Non-Faulting Operations",
+      "title_cn": "非故障操作的早期调度",
       "category": "Early Scheduling of Non-Faulting Operations",
       "pr_ids": [
-        "(c3a4339)"
+        "(c3a4339)",
+        "c3a43395bc33"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/c3a43395bc330f5046e426af28832a95ce9ef03e"
@@ -262,84 +299,101 @@
         "为非故障操作添加 EarlyOk 标记 / Add EarlyOk for Non-Faulting Operations",
         "标记经运行时检查保护的安全操作 / Mark Safe Operations Guarded by Runtime Checks",
         "避免为标志生成指令标记 EarlyOk / Avoid EarlyOk for Flag-Generating Instructions",
-        "应用早期调度优化 / Apply Early Scheduling Optimization"
+        "应用早期调度优化 / Apply Early Scheduling Optimization",
+        "为除法等非故障指令添加 earlyOk 标记 / Add earlyOk to Division Instructions",
+        "为所有已验证的非故障操作添加标记 / Add Markers to All Verified Non-Faulting Operations",
+        "检查内联函数中受保护的操作 / Verify Intrinsics with Runtime Checks"
       ],
       "created": "2026-07-08T09:40:01Z",
-      "updated": "2026-07-08T09:40:01Z"
+      "updated": "2026-07-09T05:43:01Z"
     },
     "floating_point_constant_materialization_via_memory_load.md": {
-      "title_en": "Floating-Point Constant Materialization via Memory Load",
-      "title_cn": "浮点常量通过内存加载具体化",
+      "title_en": "Floating-Point Constant Materialization via Integer Move",
+      "title_cn": "浮点常量通过整数移动指令具体化",
       "category": "Floating-Point Constant Materialization via Memory Load",
       "pr_ids": [
-        "(d7a52f9)"
+        "(d7a52f9)",
+        "d7a52f936964"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/d7a52f93696477a9858dc09a784b4945d3045983"
       ],
       "sub_methods": [
-        "将64位浮点常量加载从三指令序列优化为两指令序列"
+        "将64位浮点常量加载从三指令序列优化为两指令序列",
+        "Eliminate Integer-to-Float Move for Constant Loading / 消除常量加载时的整数到浮点寄存器移动"
       ],
       "created": "2026-07-08T09:44:05Z",
-      "updated": "2026-07-08T09:44:05Z"
+      "updated": "2026-07-09T05:45:35Z"
     },
     "floating_point_min_max_via_specialized_instructions.md": {
-      "title_en": "Floating-Point Min/Max via Hardware Instructions",
-      "title_cn": "通过硬件指令实现浮点最小/最大值",
+      "title_en": "Floating-point Min/Max via Specialized Instructions",
+      "title_cn": "使用专用指令实现浮点Min/Max",
       "category": "Floating-point Min/Max via Specialized Instructions",
       "pr_ids": [
-        "#59488"
+        "#59488",
+        "09ed9a6585b2"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/09ed9a6585b23f41ce13201c3c35f40b8b62ed21"
       ],
       "sub_methods": [
         "为目标架构添加浮点最小/最大值的硬件指令映射 / Add hardware instruction mapping for floating-point min/max on target architecture",
-        "处理 NaN 的特殊情况以符合语言规范 / Handle NaN special cases to comply with language specification"
+        "处理 NaN 的特殊情况以符合语言规范 / Handle NaN special cases to comply with language specification",
+        "直接指令匹配 / Direct Instruction Matching",
+        "NaN 安全性约束 / NaN Safety Constraint",
+        "常量传播优化 / Constant Propagation Optimization"
       ],
       "created": "2026-07-08T09:47:15Z",
-      "updated": "2026-07-08T09:47:15Z"
+      "updated": "2026-07-09T05:48:40Z"
     },
     "folding_boolean_negations_into_conditional_zero_instructions.md": {
       "title_en": "Folding Boolean Negations into Conditional Zero Instructions",
       "title_cn": "将布尔否定折叠到条件零指令中",
       "category": "Folding Boolean Negations into Conditional Zero Instructions",
       "pr_ids": [
-        "(3a29ebe)"
+        "(3a29ebe)",
+        "3a29ebeef985"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/3a29ebeef985efb12d2b8670f50b146e9a2815ca"
       ],
       "sub_methods": [
         "Eliminate negation by swapping condition zero instruction / 通过交换条件零指令消除否定",
-        "Combine negation with constant comparison / 将否定与常量比较相结合"
+        "Combine negation with constant comparison / 将否定与常量比较相结合",
+        "交换条件零指令以消除显式否定 / Swap conditional zero instructions to eliminate explicit negation",
+        "与比较结果结合的否定折叠 / Folding negation with comparison results",
+        "常量传播中的否定折叠 / Folding negation with constant propagation"
       ],
       "created": "2026-07-08T09:50:28Z",
-      "updated": "2026-07-08T09:50:28Z"
+      "updated": "2026-07-09T05:51:54Z"
     },
     "implicit_zero_comparison_optimization.md": {
-      "title_en": "Implicit Zero Branch Optimization on RISC-V",
-      "title_cn": "RISC-V 隐式零分支优化",
+      "title_en": "Implicit Zero Comparison Branch Optimization on RISC-V 64",
+      "title_cn": "RISC-V 64 上的隐式零比较分支优化",
       "category": "Implicit Zero Comparison Optimization",
       "pr_ids": [
-        "(e6c2e12)"
+        "(e6c2e12)",
+        "e6c2e12c63db"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/e6c2e12c63db5b24724db873009373af413cd1ea"
       ],
       "sub_methods": [
         "有符号比较中的零值测试优化 / Optimizing Zero Test for Signed Comparisons",
-        "无符号比较中的零值测试优化 / Optimizing Zero Test for Unsigned Comparisons"
+        "无符号比较中的零值测试优化 / Optimizing Zero Test for Unsigned Comparisons",
+        "BNEZ 优化 / BNEZ 优化",
+        "BEQZ 优化 / BEQZ 优化"
       ],
       "created": "2026-07-08T09:53:20Z",
-      "updated": "2026-07-08T09:53:20Z"
+      "updated": "2026-07-09T05:55:14Z"
     },
     "rvv_vector_configuration_optimization.md": {
-      "title_en": "RVV Vector Configuration Instruction Implementation",
-      "title_cn": "RISC-V 向量配置设置指令实现",
+      "title_en": "RVV Vector Configuration Setting Optimization",
+      "title_cn": "RVV 向量配置设置优化",
       "category": "RVV Vector Configuration Optimization",
       "pr_ids": [
-        "(c854543)"
+        "(c854543)",
+        "c8545439b596"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/c8545439b596ffc88d09b9f6970fefdf69fcfc5d"
@@ -348,17 +402,22 @@
         "指令操作码定义与编码器初始化 / Instruction Opcode Definition and Encoder Initialization",
         "汇编解析器扩展 / Assembler Parser Extension",
         "指令二进制编码实现 / Instruction Binary Encoding Implementation",
-        "操作数编码辅助函数 / Operand Encoding Helper Functions"
+        "操作数编码辅助函数 / Operand Encoding Helper Functions",
+        "使用 VSETVLI 单指令配置 / Use VSETVLI Single Instruction Configuration",
+        "使用 VSETIVLI 优化立即数长度 / Use VSETIVLI for Immediate Vector Length",
+        "使用 VSETL 简化 lmul 配置 / Use VSETL to Simplify lmul Configuration",
+        "动态选择配置指令 / Dynamically Select Configuration Instruction"
       ],
       "created": "2026-07-08T09:57:05Z",
-      "updated": "2026-07-08T09:57:05Z"
+      "updated": "2026-07-09T05:57:27Z"
     },
     "rvv_vectorized_cryptographic_primitives.md": {
-      "title_en": "RVV Vectorized Cryptographic Primitives",
-      "title_cn": "RVV向量化密码学原语",
+      "title_en": "RVV Vectorization for Cryptographic Primitives",
+      "title_cn": "RVV加密原语矢量化",
       "category": "RVV Vectorized Cryptographic Primitives",
       "pr_ids": [
-        "(6f04a92)"
+        "(6f04a92)",
+        "6f04a92be3af"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/6f04a92be3afa24560dd6149eefb991450746d72"
@@ -367,17 +426,21 @@
         "引入架构特定的向量化实现文件 / Introduce Architecture-Specific Vectorized Implementation",
         "利用向量寄存器与指令处理并行数据 / Process Parallel Data with Vector Registers and Instructions",
         "采用长度无关编程支持可变向量长度 / Adopt Length-Independent Programming for Variable Vector Lengths",
-        "优化内存访问以利用向量加载/存储 / Optimize Memory Access with Vector Loads/Stores"
+        "优化内存访问以利用向量加载/存储 / Optimize Memory Access with Vector Loads/Stores",
+        "使用向量加载/存储替代标量访问 / Use Vector Load/Store Instead of Scalar Access",
+        "用向量指令实现位移与逻辑运算 / Implement Bitwise Shifts and Logic with Vector Instructions",
+        "优化循环结构以匹配向量长度 / Optimize Loop Structure to Match Vector Length"
       ],
       "created": "2026-07-08T10:00:59Z",
-      "updated": "2026-07-08T10:00:59Z"
+      "updated": "2026-07-09T06:00:24Z"
     },
     "redundant_extension_elimination.md": {
-      "title_en": "Remove Redundant Sign Extension Before MULW on RISC-V",
-      "title_cn": "移除 RISC-V 上 MULW 之前的冗余符号扩展",
+      "title_en": "Eliminate redundant sign extension before MULW on RISC-V 64-bit",
+      "title_cn": "消除RISC-V 64位上MULW指令前的冗余符号扩展",
       "category": "Redundant Extension Elimination",
       "pr_ids": [
-        "(27ce6e4)"
+        "(27ce6e4)",
+        "27ce6e4e2649"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/27ce6e4e2649f0db113f376d0d5f60185f3c74a3"
@@ -386,34 +449,40 @@
         "移除寄存器操作数的符号扩展 / Remove sign extension for register operands",
         "移除与常量相乘时的符号扩展 / Remove sign extension when multiplying with a constant",
         "优化内存操作数到寄存器的过程 / Optimize the process from memory operands to registers",
-        "处理类型转换与乘法结合的情况 / Handle combined type conversion and multiplication cases"
+        "处理类型转换与乘法结合的情况 / Handle combined type conversion and multiplication cases",
+        "Remove SRA before MULW / 移除MULW前的SRA指令",
+        "Simplify overflow check with BLEZ / 使用BLEZ简化溢出检查"
       ],
       "created": "2026-07-08T10:04:39Z",
-      "updated": "2026-07-08T10:04:39Z"
+      "updated": "2026-07-09T06:03:08Z"
     },
     "redundant_precision_conversion_elimination.md": {
-      "title_en": "Floating-Point Precision Conversion Elimination for Abs/Sqrt",
-      "title_cn": "消除Abs/Sqrt操作中的Float64到Float32冗余精度转换",
+      "title_en": "Eliminate Redundant Floating-Point Precision Conversions",
+      "title_cn": "消除冗余float精度转换",
       "category": "Redundant Precision Conversion Elimination",
       "pr_ids": [
-        "#75463"
+        "#75463",
+        "f3966c1ada0a"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/f3966c1ada0a0ddaea873f979ee9165649eb11b7"
       ],
       "sub_methods": [
         "消除 Abs/Sqrt 操作中不必要的浮点精度转换 / Eliminate unnecessary floating-point precision conversions in Abs/Sqrt operations",
-        "针对平方根操作的类似优化 / Apply similar optimization for square root operations"
+        "针对平方根操作的类似优化 / Apply similar optimization for square root operations",
+        "Absorb redundant float32 absolute value conversion / 吸收冗余的float32绝对值转换",
+        "Absorb redundant float32 square root conversion / 吸收冗余的float32平方根转换"
       ],
       "created": "2026-07-08T10:09:40Z",
-      "updated": "2026-07-08T10:09:40Z"
+      "updated": "2026-07-09T06:05:57Z"
     },
     "register_selection_for_compressed_instruction_encoding.md": {
-      "title_en": "Prefer compressible registers on RISC-V",
-      "title_cn": "在RISC-V上优先使用可压缩寄存器",
+      "title_en": "Register Selection for Compressed Instruction Encoding",
+      "title_cn": "压缩指令编码的寄存器选择优化",
       "category": "Register Selection for Compressed Instruction Encoding",
       "pr_ids": [
-        "(4212586)"
+        "(4212586)",
+        "4212586726fc"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/4212586726fc18405218b2e27b7b22222ed7eafd"
@@ -421,34 +490,40 @@
       "sub_methods": [
         "Adjust the Register Preference Order / 调整寄存器偏好顺序",
         "Ensure the Preference is Applied in Allocation / 确保偏好在分配过程中生效",
-        "Update the Hardware Register Mask for RISC-V / 更新 RISC-V 架构的硬件寄存器掩码"
+        "Update the Hardware Register Mask for RISC-V / 更新 RISC-V 架构的硬件寄存器掩码",
+        "调整整数寄存器偏好顺序 / Adjust Integer Register Preference Order",
+        "调整浮点寄存器偏好顺序 / Adjust Floating-Point Register Preference Order"
       ],
       "created": "2026-07-08T10:13:35Z",
-      "updated": "2026-07-08T10:13:35Z"
+      "updated": "2026-07-09T06:09:36Z"
     },
     "return_address_stack_ras_optimization_in_indirect_calls.md": {
-      "title_en": "Avoiding Improper Control Transfer Hints for RAS in Indirect Calls on RISC-V",
-      "title_cn": "在RISC-V上避免不当控制转移提示以优化间接调用中的RAS",
+      "title_en": "RAS Hint Correction in Indirect Calls",
+      "title_cn": "间接调用中的 RAS 提示修正",
       "category": "Return Address Stack (RAS) Optimization in Indirect Calls",
       "pr_ids": [
-        "#76654"
+        "#76654",
+        "2d1f571c6b42"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/2d1f571c6b420757b2a72b9e53d486840a1317f9"
       ],
       "sub_methods": [
         "Replace Indirect Jumps in Entry Points with Direct Calls / 在入口点中用直接调用替换间接跳转",
-        "Correct Control Flow in Scheduler Contexts / 修正调度器上下文中的控制流"
+        "Correct Control Flow in Scheduler Contexts / 修正调度器上下文中的控制流",
+        "修正编译器间接调用的目标寄存器 / Fix target register for indirect calls in compiler",
+        "修正运行时汇编中的调用指令 / Fix call instructions in runtime assembly"
       ],
       "created": "2026-07-08T10:17:03Z",
-      "updated": "2026-07-08T10:17:03Z"
+      "updated": "2026-07-09T06:12:40Z"
     },
     "zero_register_memory_clearing.md": {
-      "title_en": "Generated Loop Memory Clearing for RISC-V",
-      "title_cn": "RISC-V上使用生成循环代替DUFFZERO进行内存清零",
+      "title_en": "Generated Loop Memory Clearing on riscv64",
+      "title_cn": "在 riscv64 上使用生成循环进行内存清零",
       "category": "Zero Register Memory Clearing",
       "pr_ids": [
-        "(879ff73)"
+        "(879ff73)",
+        "879ff736d324"
       ],
       "pr_urls": [
         "https://github.com/golang/go/commit/879ff736d324fed062896d39f6bdc8162e100093"
@@ -457,20 +532,27 @@
         "识别并替换DUFFZERO为生成循环 / Identify and replace DUFFZERO with generated loop",
         "优化循环结构以利用RISC-V指令集 / Optimize loop structure for RISC-V ISA",
         "针对特定大小范围优化 / Optimize for specific size ranges",
-        "减少循环中的分支开销 / Reduce branch overhead in the loop"
+        "减少循环中的分支开销 / Reduce branch overhead in the loop",
+        "移除 DUFFZERO 基础设施 / Remove DUFFZERO Infrastructure",
+        "小尺寸固定序列清零 / Fixed Sequence Zeroing for Small Sizes",
+        "大尺寸生成循环清零 / Generated Loop Zeroing for Large Sizes"
       ],
       "created": "2026-07-08T10:20:10Z",
-      "updated": "2026-07-08T10:20:10Z"
+      "updated": "2026-07-09T06:15:50Z"
     },
     "fence_overhead_reduction.md": {
-      "title_en": "RISC-V Fence Overhead Reduction",
-      "title_cn": "RISC-V 围栏开销减少",
+      "title_en": "Fence Overhead Reduction",
+      "title_cn": "",
       "category": "Fence Overhead Reduction",
       "pr_ids": [
         "(a4ca626)",
         "(6d9ece7)",
         "(1a01839)",
-        "(aefdbdc)"
+        "(aefdbdc)",
+        "a4ca6267e178",
+        "6d9ece73a96d",
+        "1a01839f8c05",
+        "aefdbdc7e54a"
       ],
       "pr_urls": [
         "https://github.com/openjdk/jdk/commit/a4ca6267e17815153f8fa119db19b97b1da2bd84",
@@ -504,7 +586,7 @@
         "利用 Ztso 模型避免合成数据依赖 / Leverage Ztso to avoid synthetic data dependency"
       ],
       "created": "2026-07-08T14:12:04Z",
-      "updated": "2026-07-08T15:02:15Z"
+      "updated": "2026-07-09T03:57:30Z"
     },
     "rvv_gather_based_data_reordering.md": {
       "title_en": "RVV Gather-Based Vector Reversal",
@@ -578,7 +660,55 @@
       ],
       "created": "2026-07-09T00:47:26Z",
       "updated": "2026-07-09T00:47:26Z"
+    },
+    "branch_avoidance_via_specialized_arithmetic_instructions.md": {
+      "title_en": "Branch Avoidance via Specialized Arithmetic Instructions",
+      "title_cn": "",
+      "category": "Branch Avoidance via Specialized Arithmetic Instructions",
+      "pr_ids": [
+        "1a4bbb0027ae",
+        "2ed7ad4b5c7d",
+        "edfe28541a6e",
+        "b891bfa7e67c",
+        "3d3b78203710",
+        "a7a09f69abc6",
+        "bcc33d5ef3bd"
+      ],
+      "pr_urls": [
+        "https://github.com/openjdk/jdk/commit/1a4bbb0027ae9e6df3b668454fa155861d531f72",
+        "https://github.com/openjdk/jdk/commit/2ed7ad4b5c7d2344ae6571c186f8a2903770aa57",
+        "https://github.com/openjdk/jdk/commit/edfe28541a6ed94357f873aa69778c7eba707cbb",
+        "https://github.com/openjdk/jdk/commit/b891bfa7e67c21478475642e2bfa2cdc65a3bffe",
+        "https://github.com/openjdk/jdk/commit/3d3b7820371058b40f2e694536c98aa3900abb5f",
+        "https://github.com/openjdk/jdk/commit/a7a09f69abc6c4730599d3de9067c2fde75c5172",
+        "https://github.com/openjdk/jdk/commit/bcc33d5ef3bdbfaee51c45014851c54028da03f1"
+      ],
+      "sub_methods": [],
+      "created": "2026-07-09T03:57:27Z",
+      "updated": "2026-07-09T03:57:27Z"
+    },
+    "vector_bitwise_instruction_utilization.md": {
+      "title_en": "Vector Bitwise Instruction Utilization",
+      "title_cn": "",
+      "category": "Vector Bitwise Instruction Utilization",
+      "pr_ids": [
+        "f95c93740538",
+        "fed2b56017ae",
+        "67f03f2a4f5a",
+        "5c067232bf21",
+        "07aad68c17ba"
+      ],
+      "pr_urls": [
+        "https://github.com/openjdk/jdk/commit/f95c93740538e5e508407ec6750ed9f126fdc3c3",
+        "https://github.com/openjdk/jdk/commit/fed2b56017ae454082d320513b77518e624fb03c",
+        "https://github.com/openjdk/jdk/commit/67f03f2a4f5ac12748ffbf5c04f248a60869e180",
+        "https://github.com/openjdk/jdk/commit/5c067232bf21aaca2b7addd2a862e15a8696ffb8",
+        "https://github.com/openjdk/jdk/commit/07aad68c17ba8d95aee914f3bd9705301477acf6"
+      ],
+      "sub_methods": [],
+      "created": "2026-07-09T03:57:29Z",
+      "updated": "2026-07-09T03:57:29Z"
     }
   },
-  "last_updated": "2026-07-09T00:47:26Z"
+  "last_updated": "2026-07-09T06:15:50Z"
 }

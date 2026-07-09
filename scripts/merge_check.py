@@ -137,7 +137,7 @@ def find_candidates(
     new: PatternInfo,
     existing: list[PatternInfo],
     threshold: float = 0.2,
-    max_candidates: int = 5,
+    max_candidates: int = 20,
 ) -> list[tuple[PatternInfo, float]]:
     """Find existing patterns whose title overlaps with the new pattern.
 
@@ -213,6 +213,8 @@ def run_merge_check(
     llm: LLMClient,
     prompt_path: str,
     verbose: bool = False,
+    jaccard_threshold: float = 0.2,
+    max_candidates: int = 20,
 ) -> dict[str, list[dict[str, Any]]]:
     """Full merge check pipeline.
 
@@ -251,7 +253,9 @@ def run_merge_check(
     new_results: list[PatternInfo] = []
 
     for np in new_patterns:
-        candidates = find_candidates(np, existing)
+        candidates = find_candidates(np, existing,
+                                     threshold=jaccard_threshold,
+                                     max_candidates=max_candidates)
 
         if not candidates:
             if verbose:

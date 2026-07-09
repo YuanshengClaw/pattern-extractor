@@ -12,11 +12,10 @@ from typing import Any
 
 from .llm_client import LLMClient, LLMError
 from .pr_grouping import (
-    build_pattern_title,
     extract_pr_number,
     extract_pr_url,
+    group_by_category,
     compute_group_stats,
-    MIN_PRS_FOR_PATTERN,
 )
 from .diff_parser import summarize_diffs_for_group
 
@@ -59,8 +58,10 @@ def generate_pattern_sections(
     prompt_dir: str,
     project_name: str = "",
     logger: Any = None,
-    max_context_commits: int = 8,
+    max_context_commits: int = 50,
+    max_files_per_commit: int = 50,
     language: str = "zh",
+    license_text: str = '<!-- (C) 2026 Intel Corporation, MIT license -->',
 ) -> dict:
     """Run all LLM phases to generate a complete pattern document.
 
@@ -100,7 +101,9 @@ def generate_pattern_sections(
 
     # Phase B: Generate §4 When to apply + profile signals + typical table
     when_text = _phase_when(title_info, commits, llm, prompt_dir, logger,
-                            max_context=max_context_commits, lang_inst=lang_inst)
+                            max_context=max_context_commits,
+                            max_files_per_commit=max_files_per_commit,
+                            lang_inst=lang_inst)
 
     # Phase C: Generate §5 Why this is slow
     why_text = _phase_why(title_info, commits, llm, prompt_dir, logger,
@@ -108,7 +111,9 @@ def generate_pattern_sections(
 
     # Phase D: Generate §6 The fix with code blocks
     fix_text = _phase_fix(title_info, commits, llm, prompt_dir, logger,
-                          max_context=max_context_commits, lang_inst=lang_inst)
+                          max_context=max_context_commits,
+                          max_files_per_commit=max_files_per_commit,
+                          lang_inst=lang_inst)
 
     # Phase E: Generate §7 Verification
     verify_text = _phase_verify(title_info, commits, llm, prompt_dir, logger,
@@ -124,7 +129,7 @@ def generate_pattern_sections(
         "title_en": title_info.get("title_en", category),
         "title_cn": title_info.get("title_cn", ""),
         "filename": _section_file_name(category),
-        "license": '<!-- (C) 2026 Intel Corporation, MIT license -->',
+        "license": license_text,
         "see_also": title_info.get("see_also", ""),
         "when_text": when_text,
         "why_text": why_text,
@@ -201,7 +206,7 @@ def _fallback_title(category: str, commits: list[dict]) -> dict:
     }
 
 
-def _build_commit_context(commits: list[dict], max_commits: int = 8) -> str:
+def _build_commit_context(commits: list[dict], max_commits: int = 50) -> str:
     """Build a rich context string from a group of commits for LLM prompts."""
     parts = []
     for i, c in enumerate(commits[:max_commits], 1):
@@ -223,7 +228,8 @@ def _build_commit_context(commits: list[dict], max_commits: int = 8) -> str:
 def _phase_when(title_info: dict, commits: list[dict],
                 llm: LLMClient, prompt_dir: str,
                 logger: Any = None,
-                max_context: int = 8,
+                max_context: int = 50,
+                max_files_per_commit: int = 50,
                 lang_inst: str = "") -> str:
     """Phase B: Generate §4 When to apply."""
     prompt_path = os.path.join(prompt_dir, "phase_when.txt")
@@ -232,7 +238,7 @@ def _phase_when(title_info: dict, commits: list[dict],
 
     system_prompt = _load_prompt(prompt_path) + lang_inst
     ctx = _build_commit_context(commits, max_commits=max_context)
-    diff_summary = summarize_diffs_for_group(commits, max_files_per_commit=2, max_commits=max_context)
+    diff_summary = summarize_diffs_for_group(commits, max_files_per_commit=max_files_per_commit, max_commits=max_context)
 
     user_content = (
         f"Pattern title: {title_info.get('title_en', '')} / {title_info.get('title_cn', '')}\n\n"
@@ -251,7 +257,7 @@ def _phase_when(title_info: dict, commits: list[dict],
 def _phase_why(title_info: dict, commits: list[dict],
                llm: LLMClient, prompt_dir: str,
                logger: Any = None,
-               max_context: int = 8,
+               max_context: int = 50,
                lang_inst: str = "") -> str:
     """Phase C: Generate §5 Why this is slow."""
     prompt_path = os.path.join(prompt_dir, "phase_why.txt")
@@ -277,7 +283,8 @@ def _phase_why(title_info: dict, commits: list[dict],
 def _phase_fix(title_info: dict, commits: list[dict],
                llm: LLMClient, prompt_dir: str,
                logger: Any = None,
-               max_context: int = 8,
+               max_context: int = 50,
+               max_files_per_commit: int = 50,
                lang_inst: str = "") -> str:
     """Phase D: Generate §6 The fix with code blocks."""
     prompt_path = os.path.join(prompt_dir, "phase_fix.txt")
@@ -285,7 +292,7 @@ def _phase_fix(title_info: dict, commits: list[dict],
             return ""
 
     system_prompt = _load_prompt(prompt_path) + lang_inst
-    diff_summary = summarize_diffs_for_group(commits, max_files_per_commit=3, max_commits=max_context)
+    diff_summary = summarize_diffs_for_group(commits, max_files_per_commit=max_files_per_commit, max_commits=max_context)
     ctx = _build_commit_context(commits, max_commits=max_context)
 
     user_content = (
@@ -306,7 +313,7 @@ def _phase_fix(title_info: dict, commits: list[dict],
 def _phase_verify(title_info: dict, commits: list[dict],
                   llm: LLMClient, prompt_dir: str,
                   logger: Any = None,
-                  max_context: int = 8,
+                  max_context: int = 50,
                   lang_inst: str = "") -> str:
     """Phase E: Generate §7 Verification."""
     prompt_path = os.path.join(prompt_dir, "phase_verify.txt")
@@ -332,7 +339,7 @@ def _phase_verify(title_info: dict, commits: list[dict],
 def _phase_present(title_info: dict, commits: list[dict],
                    llm: LLMClient, prompt_dir: str,
                    logger: Any = None,
-                   max_context: int = 8,
+                   max_context: int = 50,
                    lang_inst: str = "") -> str:
     """Phase F1: Generate §8 Presenting."""
     prompt_path = os.path.join(prompt_dir, "phase_present.txt")

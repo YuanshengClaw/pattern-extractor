@@ -41,7 +41,6 @@ from .pr_grouping import (
     group_by_category,
     compute_group_stats,
     llm_subcluster,
-    MIN_PRS_FOR_PATTERN,
     extract_pr_number,
 )
 from .pattern_generator import generate_pattern_sections, assemble_pattern_markdown
@@ -100,7 +99,8 @@ def _resolve_prompt_dir(config: dict) -> str:
 def _load_and_enrich(csv_path: str,
                      project_name: str = "",
                      skip_fetch: bool = False,
-                     verbose: bool = False) -> list[dict]:
+                     verbose: bool = False,
+                     rate_limit_delay: float = 0.3) -> list[dict]:
     """Full pipeline: load CSV/xlsx → enrich commits via GitHub API.
 
     Args:
@@ -140,7 +140,7 @@ def _load_and_enrich(csv_path: str,
 
     # Enrich with message + diff from GitHub
     if not skip_fetch:
-        fetcher = CommitFetcher(rate_limit_delay=0.3)
+        fetcher = CommitFetcher(rate_limit_delay=rate_limit_delay)
         start = time.time()
         commits = fetcher.enrich_commits(commits)
         elapsed = time.time() - start
@@ -151,7 +151,7 @@ def _load_and_enrich(csv_path: str,
     else:
         # Skip fetch: set placeholder message for each commit
         if verbose:
-            print("  Skiping GitHub fetch (--skip-fetch)")
+            print("  Skipping GitHub fetch (--skip-fetch)")
         for c in commits:
             c["message"] = c.get("thought", c.get("url", ""))
             c["diff"] = ""
@@ -160,12 +160,14 @@ def _load_and_enrich(csv_path: str,
 
 
 def _group_commits(commits: list[dict],
-                   min_prs: int = MIN_PRS_FOR_PATTERN) -> list[dict]:
+                   min_prs: int = 1,
+                   max_prs_before_subcluster: int = 100) -> list[dict]:
     """Group enriched commits by 'idea' field, compute stats.
 
     Args:
         commits: List of enriched commit dicts.
         min_prs: Minimum PRs for pattern_ready (from config or default).
+        max_prs_before_subcluster: Threshold for LLM subclustering.
 
     Returns same shape as compute_group_stats: list of group_info dicts.
     """
@@ -177,7 +179,8 @@ def _group_commits(commits: list[dict],
             idea = "uncategorized"
         groups[idea].append(c)
 
-    return compute_group_stats(groups, min_prs=min_prs)
+    return compute_group_stats(groups, min_prs=min_prs,
+                               max_prs_before_subcluster=max_prs_before_subcluster)
 
 
 # ── Commands ──────────────────────────────────────────────────────────────────
@@ -190,6 +193,7 @@ def cmd_list_groups(args):
         return
 
     stats = _group_commits(commits)
+    effective_min_prs = 1  # default, matches _group_commits default
 
     print(f"\nGroups: {len(stats)}\n")
     print(f"{'Ready':>6} {'Count':>6}  Category / Idea")
@@ -199,7 +203,7 @@ def cmd_list_groups(args):
         print(f"  {ready}  {s['count']:>4}  {s['category'][:60]}")
     print()
     ready_count = sum(1 for s in stats if s["pattern_ready"])
-    print(f"{ready_count} group(s) ready for pattern generation (≥{MIN_PRS_FOR_PATTERN} PRs)")
+    print(f"{ready_count} group(s) ready for pattern generation (≥{effective_min_prs} PRs)")
 
 
 def cmd_generate(args):
@@ -207,22 +211,37 @@ def cmd_generate(args):
     config = _load_config(args.config)
     prompt_dir = _resolve_prompt_dir(config)
 
+    # ── Pipeline config (read before _load_and_enrich uses rate_limit) ─────
+    pipeline_cfg = config.get("pipeline", {})
+    github_cfg = config.get("github", {})
+    qa_cfg = config.get("qa", {})
+    license_cfg = config.get("license", {})
+    min_prs = pipeline_cfg.get("min_prs_for_pattern", 1)
+    max_context = pipeline_cfg.get("max_prs_for_llm_context", 50)
+    max_subcluster = pipeline_cfg.get("max_prs_before_subcluster", 100)
+    max_files = pipeline_cfg.get("max_files_per_commit", 50)
+    rate_limit = github_cfg.get("rate_limit_delay", 0.3)
+    review_before_publish = pipeline_cfg.get("review_before_publish", True)
+    qa_overlap = qa_cfg.get("why_when_overlap_threshold", 0.7)
+    license_text = (
+        f'<!-- (C) {license_cfg.get("copyright_year", "2026")} '
+        f'{license_cfg.get("copyright_holder", "Intel Corporation")}, '
+        f'{license_cfg.get("spdx_identifier", "MIT")} license -->'
+    )
+
     # Load and enrich
     project_name = args.project or config.get("project", {}).get("name", "")
     commits = _load_and_enrich(
         args.input, project_name,
         skip_fetch=args.skip_fetch,
         verbose=args.verbose,
+        rate_limit_delay=rate_limit,
     )
     if not commits:
         print("No commits loaded. Nothing to generate.")
         return
 
-    # ── Pipeline config ────────────────────────────────────────────────────
-    pipeline_cfg = config.get("pipeline", {})
-    min_prs = pipeline_cfg.get("min_prs_for_pattern", MIN_PRS_FOR_PATTERN)
-    max_context = pipeline_cfg.get("max_prs_for_llm_context", 8)
-    review_before_publish = pipeline_cfg.get("review_before_publish", True)
+
 
     # Resolve review_first: CLI --no-review overrides config, config overrides default
     if args.review is None:
@@ -230,7 +249,8 @@ def cmd_generate(args):
     else:
         review_first = args.review
 
-    stats = _group_commits(commits, min_prs=min_prs)
+    stats = _group_commits(commits, min_prs=min_prs,
+                           max_prs_before_subcluster=max_subcluster)
 
     # Filter by group pattern if specified
     if args.group:
@@ -288,7 +308,9 @@ def cmd_generate(args):
         pattern_data = generate_pattern_sections(
             s, llm, prompt_dir, project_name, logger=logger,
             max_context_commits=max_context,
+            max_files_per_commit=max_files,
             language=config.get("language", "zh"),
+            license_text=license_text,
         )
         pattern_text = assemble_pattern_markdown(pattern_data)
 
@@ -300,7 +322,7 @@ def cmd_generate(args):
 
         # QA
         if args.qa:
-            qa_checks = run_all_checks(pattern_text)
+            qa_checks = run_all_checks(pattern_text, overlap_threshold=qa_overlap)
             print_qa_report(qa_checks, f"QA: {s['category']}")
 
         # Update index
@@ -362,18 +384,25 @@ def cmd_merge_check(args):
         sys.exit(1)
     llm = LLMClient(llm_config)
 
+    merge_cfg = config.get("merge_check", {})
     results = run_merge_check(
         existing_dir=args.existing,
         new_dir=args.new,
         llm=llm,
         prompt_path=prompt_path,
         verbose=args.verbose,
+        jaccard_threshold=merge_cfg.get("jaccard_threshold", 0.2),
+        max_candidates=merge_cfg.get("max_candidates", 20),
     )
     print_report(results)
 
 
 def cmd_qa(args):
     """Run quality checks on existing pattern file(s)."""
+    config = _load_config(args.config)
+    qa_cfg = config.get("qa", {})
+    overlap_threshold = qa_cfg.get("why_when_overlap_threshold", 0.7)
+
     files = args.patterns
     if not files:
         print("Error: specify at least one pattern file", file=sys.stderr)
@@ -387,7 +416,7 @@ def cmd_qa(args):
             continue
         with open(fpath, "r", encoding="utf-8") as f:
             text = f.read()
-        checks = run_all_checks(text)
+        checks = run_all_checks(text, overlap_threshold=overlap_threshold)
         ok = print_qa_report(checks, f"QA: {os.path.basename(fpath)}")
         if not ok:
             all_pass = False
@@ -397,6 +426,10 @@ def cmd_qa(args):
 
 def cmd_publish(args):
     """Move a pattern from patches/review to the output directory."""
+    config = _load_config(args.config)
+    qa_cfg = config.get("qa", {})
+    overlap_threshold = qa_cfg.get("why_when_overlap_threshold", 0.7)
+
     src = args.file
     if not os.path.exists(src):
         print(f"Error: source not found: {src}", file=sys.stderr)
@@ -410,7 +443,7 @@ def cmd_publish(args):
         text = f.read()
 
     # Run QA before publishing
-    checks = run_all_checks(text)
+    checks = run_all_checks(text, overlap_threshold=overlap_threshold)
     ok = print_qa_report(checks, f"Pre-publish QA: {filename}")
     if not ok and not args.force:
         print("QA checks failed. Use --force to publish anyway.", file=sys.stderr)
@@ -494,9 +527,11 @@ def main():
 
     # qa
     qa = subparsers.add_parser("qa",
-                               help="Run quality checks on pattern .md files")
+                                help="Run quality checks on pattern .md files")
     qa.add_argument("-p", "--patterns", nargs="+", required=True,
-                    help="Pattern .md file(s) to check")
+                     help="Pattern .md file(s) to check")
+    qa.add_argument("-c", "--config", default="config.json",
+                     help="Config file (default: config.json)")
 
     # publish
     pub = subparsers.add_parser("publish",
@@ -507,6 +542,8 @@ def main():
                      help="Output directory")
     pub.add_argument("--force", action="store_true",
                      help="Publish even if QA fails")
+    pub.add_argument("-c", "--config", default="config.json",
+                     help="Config file (default: config.json)")
 
     args = parser.parse_args()
 

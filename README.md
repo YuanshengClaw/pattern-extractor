@@ -28,7 +28,7 @@ pip install openpyxl
 
 ### Configure
 
-Edit `config.json` with your LLM API endpoint and project settings:
+Edit `config.json` with your LLM API endpoint and project settings. All numeric thresholds can be tuned per project:
 
 ```json
 {
@@ -37,16 +37,34 @@ Edit `config.json` with your LLM API endpoint and project settings:
         "base_url": "https://api.openai.com/v1",
         "model": "gpt-4o",
         "temperature": 0.1,
-        "max_tokens": 4096
+        "max_tokens": 4096,
+        "timeout": 120
+    },
+    "license": {
+        "copyright_holder": "Intel Corporation",
+        "copyright_year": "2026",
+        "spdx_identifier": "MIT"
     },
     "project": {
         "name": "OpenJDK"
     },
     "language": "zh",
     "pipeline": {
-        "min_prs_for_pattern": 2,
-        "max_prs_for_llm_context": 8,
+        "min_prs_for_pattern": 1,
+        "max_prs_for_llm_context": 50,
+        "max_prs_before_subcluster": 100,
+        "max_files_per_commit": 50,
         "review_before_publish": true
+    },
+    "merge_check": {
+        "jaccard_threshold": 0.2,
+        "max_candidates": 20
+    },
+    "github": {
+        "rate_limit_delay": 0.3
+    },
+    "qa": {
+        "why_when_overlap_threshold": 0.7
     },
     "output": {
         "pattern_dir": "output/patterns",
@@ -60,6 +78,27 @@ Edit `config.json` with your LLM API endpoint and project settings:
 - `"zh"` — Chinese (默认), technical terms remain in English
 - `"en"` — English
 - Unset → defaults to `"zh"` for backward compatibility
+
+### Configuration reference
+
+| Section | Key | Default | Description |
+|---------|-----|---------|-------------|
+| `llm` | `timeout` | `120` | LLM API request timeout in seconds |
+| `license` | `copyright_holder` | `"Intel Corporation"` | Copyright holder name in generated license header |
+| `license` | `copyright_year` | `"2026"` | Copyright year in generated license header |
+| `license` | `spdx_identifier` | `"MIT"` | SPDX license identifier in generated license header |
+| `pipeline` | `min_prs_for_pattern` | `1` | Minimum PRs needed to generate a pattern |
+| `pipeline` | `max_prs_for_llm_context` | `50` | Max PRs included in each LLM prompt context |
+| `pipeline` | `max_prs_before_subcluster` | `100` | If a group exceeds this, flag for LLM subclustering |
+| `pipeline` | `max_files_per_commit` | `50` | Max diff files shown per commit in LLM prompts |
+| `pipeline` | `review_before_publish` | `true` | Write to `patches/review/` instead of output directly |
+| `merge_check` | `jaccard_threshold` | `0.2` | Keyword overlap threshold for merge candidate pre-filter |
+| `merge_check` | `max_candidates` | `20` | Max existing patterns to compare per new pattern |
+| `github` | `rate_limit_delay` | `0.3` | Seconds between GitHub API calls (rate limiting) |
+| `qa` | `why_when_overlap_threshold` | `0.7` | Max word overlap allowed between §5 Why and §4 When |
+| `output` | `pattern_dir` | `"output/patterns"` | Published pattern output directory |
+| `output` | `index_dir` | `"existing_patterns"` | Cross-reference index directory |
+| `output` | `triggers_dir` | `"triggers"` | Signal → pattern reverse index directory |
 
 ### Run the full pipeline
 
@@ -178,7 +217,7 @@ python3 -m scripts.cli merge-check \
           ┌─────────────────────┐
           │ Step 2: Group       │  Groups commits by "Idea" column.
           │                     │  Ignores "correct=no" (human-rejected).
-          │                     │  Threshold: configurable (≥2 default).
+          │                     │  Threshold: configurable (pipeline.min_prs_for_pattern).
           └─────────┬───────────┘
                     ▼
           ┌─────────────────────┐
@@ -261,7 +300,7 @@ Each generated pattern passes through an automated QA pipeline:
 4. **§5 Architecture reasoning** — does the Why section contain microarchitecture-level keywords, and is it distinct from the When section?
 5. **§6 Code blocks** — do code blocks have file path + `// Before:` / `// After:` annotations?
 6. **§7 Verification** — at least 2 of: tool command, test file, boundary condition
-7. **§8 Presenting length** — 3–5 sentences?
+7. **§8 Presenting length** — 2–8 sentences?
 8. **§9 PR links** — are PR links present in the table?
 9. **§9 No duplicates** — no duplicate PRs in the table?
 
