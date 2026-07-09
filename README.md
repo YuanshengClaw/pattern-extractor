@@ -2,7 +2,7 @@
 
 **Extract structured optimization pattern documents from classified optimization data — automatically.**
 
-This tool implements a **CSV → Pattern Document** pipeline. It reads CSV/XLSX files in a compatible format (e.g., from [rv-optkb-tool](https://github.com/your-org/rv-optkb-tool)), enriches commits via the GitHub API, groups them by optimization category, and generates structured 9-section pattern documents (`.md`) using LLM-driven multi-phase generation.
+This tool implements a **CSV → Pattern Document** pipeline. It reads CSV/XLSX files in a compatible format (e.g., from [rv-optkb-tool](https://github.com/YuanshengClaw/rv-optkb-tool)), enriches commits via the GitHub API, groups them by optimization category, and generates structured 9-section pattern documents (`.md`) using LLM-driven multi-phase generation.
 
 Each output pattern captures *when* an optimization applies, *why* the original code is slow (microarchitecture root cause), *how* to fix it with code Before/After examples, and *how* to verify the fix.
 
@@ -140,9 +140,9 @@ python3 -m scripts.cli merge-check \
     --new staging/openssl/
 
 # Result categories:
-#   ✅ Merge candidates — LLM confirmed same technique → merge new PRs into existing pattern
-#   ❓ Suspected matches — keyword overlap but LLM unsure → manual review
-#   🆕 New patterns — no match → QA → publish as separate patterns
+#    Merge candidates — LLM confirmed same technique → merge new PRs into existing pattern
+#    Suspected matches — keyword overlap but LLM unsure → manual review
+#    New patterns — no match → QA → publish as separate patterns
 ```
 
 ### Important flags
@@ -151,7 +151,7 @@ python3 -m scripts.cli merge-check \
 | --------------------------- | ----------------- | ----------------------------------------------------- |
 | `--skip-fetch`              | `list-groups`, `generate` | Skip GitHub API commit fetching (offline/testing) |
 | `--no-qa`                   | `generate`        | Skip QA checks after generation                       |
-| `--no-review`               | `generate`        | Write directly to output, skip `patches/review/`       |
+| `--no-review`               | `generate`        | Write directly to output, skip `patches/review/`      |
 | `--group KEYWORD`           | `generate`        | Generate only groups matching a keyword               |
 | `--max N`                   | `generate`        | Max patterns to generate (0 = unlimited)              |
 | `--project NAME`            | `list-groups`, `generate` | Filter/set project name (xlsx sheet filter, CSV override) |
@@ -228,12 +228,12 @@ python3 -m scripts.cli merge-check \
 ┌──────────────────────────────────────────────────────────────┐
 │                  Merge Check (cross-project)                 │
 │                                                              │
-│  Keyword pre-filter (Jaccard) → LLM semantic judgment       │
+│  Keyword pre-filter (Jaccard) → LLM semantic judgment        │
 │                                                              │
 │  Results:                                                    │
-│    ✅ Merge candidate  →  manually merge into existing       │
-│    ❓ Suspected match  →  human review                       │
-│    🆕 New pattern      →  QA → publish as standalone        │
+│     Merge candidate  →  manually merge into existing         │
+│     Suspected match  →  human review                         │
+│     New pattern      →  QA → publish as standalone           │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -274,7 +274,7 @@ Two cross-reference files are maintained automatically:
 
 ## Input Format
 
-The input CSV/XLSX follows a simple schema (compatible with [rv-optkb-tool](https://github.com/your-org/rv-optkb-tool)'s `csv-review/main.py` output). Required columns:
+The input CSV/XLSX follows a simple schema (compatible with [rv-optkb-tool](https://github.com/YuanshengClaw/rv-optkb-tool)'s `csv-review/main.py` output). Required columns:
 
 | Column      | Description                                         |
 | ----------- | --------------------------------------------------- |
@@ -364,12 +364,12 @@ python3 -m scripts.cli merge-check \
     -v
 
 # Output example:
-#   ✅ Merge candidates (high confidence):
+#    Merge candidates (high confidence):
 #     existing: fence-memory-barrier-reduction.md — "Memory barrier / fence overhead reduction"
 #     new:      riscv-fence-membar-opt.md — "RISC-V fence/membar optimization"
 #     → Merge OpenSSL content into existing pattern
 #
-#   🆕 New patterns (no match found):
+#    New patterns (no match found):
 #     aes-gcm-vector-acceleration.md
 ```
 
@@ -382,5 +382,5 @@ python3 -m scripts.cli generate -i ideas.csv --skip-fetch -o output/patterns/
 
 ## Related
 
-- [rv-optkb-tool](https://github.com/your-org/rv-optkb-tool) — RISC-V optimization knowledge extraction (Patch → Thought → Idea). Its `csv-review/main.py` output is a compatible input for this tool.
+- [rv-optkb-tool](https://github.com/YuanshengClaw/rv-optkb-tool) — RISC-V optimization knowledge extraction (Patch → Thought → Idea). Its `csv-review/main.py` output is a compatible input for this tool.
 - The **EoK 3-layer knowledge model**: Patch → Thought → Idea → **Pattern** (this tool adds the fourth layer: structured optimization pattern documents).
