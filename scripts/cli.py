@@ -188,7 +188,7 @@ def _group_commits(commits: list[dict],
 
 def cmd_list_groups(args):
     """List PR groups from CSV/xlsx data."""
-    commits = _load_and_enrich(args.input, args.project, skip_fetch=args.skip_fetch, verbose=True)
+    commits = _load_and_enrich(args.input, args.project, skip_fetch=args.skip_fetch, verbose=args.verbose)
     if not commits:
         return
 
@@ -481,6 +481,8 @@ def main():
                     help="Project name (auto-detected from xlsx sheet or filename)")
     lg.add_argument("--skip-fetch", action="store_true",
                     help="Skip GitHub API commit fetch (list groups only)")
+    lg.add_argument("-v", "--verbose", action="store_true",
+                    help="Detailed progress logging")
 
     # generate
     gen = subparsers.add_parser("generate",
