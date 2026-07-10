@@ -11,7 +11,8 @@ Each output pattern captures *when* an optimization applies, *why* the original 
 ### Prerequisites
 
 - Python 3.10+
-- GitHub API access: `gh auth login` strongly recommended (for commit enrichment)
+- `git` (for non-GitHub repos: clone + fetch commits from any git host)
+- GitHub API access: `gh auth login` (for GitHub repos; strongly recommended when available)
 - An LLM API endpoint compatible with the OpenAI chat completions format
 
 ### Install
@@ -94,6 +95,7 @@ Edit `config.json` with your LLM API endpoint and project settings. All numeric 
 | `pipeline` | `review_before_publish` | `true` | Write to `patches/review/` instead of output directly |
 | `merge_check` | `jaccard_threshold` | `0.2` | Keyword overlap threshold for merge candidate pre-filter |
 | `merge_check` | `max_candidates` | `20` | Max existing patterns to compare per new pattern |
+| (root) | `git_repo_url` | `""` | Default repo URL for generic git fetch (used when no `--git-url` flag is passed) |
 | `github` | `rate_limit_delay` | `0.3` | Seconds between GitHub API calls (rate limiting) |
 | `qa` | `why_when_overlap_threshold` | `0.7` | Max word overlap allowed between §5 Why and §4 When |
 | `output` | `pattern_dir` | `"output/patterns"` | Published pattern output directory |
@@ -188,7 +190,8 @@ python3 -m scripts.cli merge-check \
 
 | Flag                        | Applies to        | Description                                           |
 | --------------------------- | ----------------- | ----------------------------------------------------- |
-| `--skip-fetch`              | `list-groups`, `generate` | Skip GitHub API commit fetching (offline/testing) |
+| `-u` / `--git-url`          | `list-groups`, `generate` | Git repo URL for generic git fetch (bypasses GitHub API; overrides `config.json` `git_repo_url`) |
+| `--skip-fetch`              | `list-groups`, `generate` | Skip commit fetching entirely (offline/testing) |
 | `--no-qa`                   | `generate`        | Skip QA checks after generation                       |
 | `--no-review`               | `generate`        | Write directly to output, skip `patches/review/`      |
 | `--group KEYWORD`           | `generate`        | Generate only groups matching a keyword               |
@@ -208,11 +211,13 @@ python3 -m scripts.cli merge-check \
          CSV / XLSX (classified optimization data)
                     │
                     ▼
-          ┌─────────────────────┐
-          │ Step 1: Load &      │  Reads CSV (or multi-sheet XLSX).
-          │ Enrich              │  Fetches commit message + diff
-          │                     │  from GitHub API via `gh` CLI.
-          └─────────┬───────────┘
+           ┌─────────────────────┐
+           │ Step 1: Load &      │  Reads CSV (or multi-sheet XLSX).
+           │ Enrich              │  Fetches commit message + diff.
+           │                     │  GitHub repos → `gh api` CLI.
+           │                     │  Non-GitHub repos → `git clone --bare`
+           │                     │  + `git show` (GitLab, Gitee, etc.).
+           └─────────┬───────────┘
                     ▼
           ┌─────────────────────┐
           │ Step 2: Group       │  Groups commits by "Idea" column.
@@ -315,9 +320,9 @@ Two cross-reference files are maintained automatically:
 
 The input CSV/XLSX follows a simple schema (compatible with [rv-optkb-tool](https://github.com/YuanshengClaw/rv-optkb-tool)'s `csv-review/main.py` output). Required columns:
 
-| Column      | Description                                         |
-| ----------- | --------------------------------------------------- |
-| `Commit URL` | Full GitHub commit URL                              |
+| Column       | Description                                                          |
+| ------------ | -------------------------------------------------------------------- |
+| `Commit URL` | Full commit URL (GitHub, GitLab, Gitee, self-hosted git, etc.) — SHA is auto-detected from the URL path |
 | `Idea`      | Optimization category (→ pattern group)              |
 | `Thought`   | AI-extracted optimization technique description      |
 | `Correct?`  | Human review verdict: "yes" or "no" (rows marked "no" are filtered out) |
@@ -334,7 +339,7 @@ pattern-extractor/
 ├── scripts/
 │   ├── cli.py                   # Unified CLI entry point
 │   ├── csv_loader.py            # CSV/XLSX reader + Idea grouping
-│   ├── commit_fetcher.py        # GitHub commit enrichment via `gh` CLI
+│   ├── commit_fetcher.py        # Commit enrichment: GitHub repos via `gh` CLI, non-GitHub repos via `git clone --bare`
 │   ├── pr_grouping.py           # Group stats, sub-clustering, PR extraction
 │   ├── pattern_generator.py     # Multi-phase LLM pattern generation (6 phases)
 │   ├── pattern_writer.py        # Pattern .md writer + index + trigger table
@@ -417,6 +422,22 @@ python3 -m scripts.cli merge-check \
 ```bash
 python3 -m scripts.cli list-groups -i ideas.csv --skip-fetch
 python3 -m scripts.cli generate -i ideas.csv --skip-fetch -o output/patterns/
+```
+
+### Non-GitHub repos (GitLab, Gitee, self-hosted git, etc.)
+
+Commit URLs from non-GitHub hosts are auto-detected. The tool fetches commits via `git clone --bare` + `git show`:
+
+```bash
+# Auto-detect from FFmpeg CSV (URLs like https://code.ffmpeg.org/...)
+python3 -m scripts.cli list-groups -i ffmpeg_ideas.csv -v
+
+# Force a specific git repo URL (bypasses GitHub API even for GitHub URLs)
+python3 -m scripts.cli list-groups -i openssl_ideas.csv -u https://github.com/openssl/openssl -v
+
+# Generate patterns with a default git repo URL from config.json
+# (add "git_repo_url": "https://gitlab.com/pipewire/pipewire" to config.json)
+python3 -m scripts.cli generate -i pipewire_ideas.csv -o output/patterns/ -v
 ```
 
 ## Related
