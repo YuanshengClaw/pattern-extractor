@@ -203,12 +203,12 @@ def check_related_pr_links(text: str) -> dict:
     Accepts both PR-number links (`[#12345](https://github.com/...)`)
     and commit SHA links (`[3d9a89b05733](https://github.com/.../commit/...)).
     """
-    # Check for markdown links to github.com in the table
-    pr_links = re.findall(r'\[[^\]]+\]\(https?://github\.com', text)
+    # Check for any markdown links (GitHub, GitLab, Gitee, self-hosted, etc.)
+    pr_links = re.findall(r'\[[^\]]+\]\(https?://[^\)\s]+', text)
     return {
         "check": "§9 Related PRs have links",
         "pass": len(pr_links) > 0,
-        "detail": f"{len(pr_links)} link(s) found" if pr_links else "No github links found",
+        "detail": f"{len(pr_links)} link(s) found" if pr_links else "No links found in Related PRs table",
     }
 
 
