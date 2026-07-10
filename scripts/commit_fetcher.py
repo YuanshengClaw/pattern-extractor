@@ -86,13 +86,18 @@ class CommitFetcher:
             return None
 
         # Fetch diff separately
+        # NOTE: diff is plain text, NOT JSON — no --jq flag here.
+        # `gh api` with a non-JSON accept header still writes the response
+        # to stdout when --jq is omitted. We always get stdout regardless of
+        # HTTP status, but check stderr for errors to detect failure.
         try:
             diff_result = subprocess.run(
-                ["gh", "api", f"{url}", "--header", "Accept: application/vnd.github.v3.diff",
-                 "--jq", "."],
+                ["gh", "api", f"{url}", "--header", "Accept: application/vnd.github.v3.diff"],
                 capture_output=True, text=True, timeout=60,
             )
-            diff_text = diff_result.stdout if diff_result.returncode == 0 else ""
+            diff_text = diff_result.stdout
+            if diff_result.returncode != 0:
+                diff_text = ""
         except (subprocess.TimeoutExpired, FileNotFoundError):
             diff_text = ""
 
