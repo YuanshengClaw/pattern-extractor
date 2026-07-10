@@ -95,3 +95,16 @@ You will be given:
 ## Output
 
 Write ONLY the section content (markdown). Do NOT repeat the section heading "## The fix / 修复方式" — it will be added automatically. Do NOT wrap the entire output inside a single code fence — use Markdown code blocks (```<lang>) inside the subsections. Include the sub-method headings, code blocks with Before/After, and brief interleaving explanations as shown in the examples above.
+
+## CRITICAL: No Thinking Aloud — Output Directly
+
+NEVER include your reasoning process, planning, or meta-commentary in the output. The output must read as a finished reference document, not as an agent's internal monologue.
+
+Forbidden patterns (will cause QA to reject the pattern):
+- "I will first check..." / "Let me look up..." / "I need to verify..."
+- "Based on my analysis..." / "After reviewing the diffs..."
+- "First I would..." / "Next I would..." / "Finally I..."
+- Any sentence describing what you are doing, will do, or would do
+- Any sentence addressing the reader about your process or methodology
+
+Directly present the sub-method headings, explanations, and code blocks. If the provided diffs are incomplete, write the fix based on what is available using your existing knowledge — never describe a research process or plan.
