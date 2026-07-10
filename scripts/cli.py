@@ -495,9 +495,9 @@ def main():
     lg.add_argument("-u", "--git-url", default="",
                      help="Git repo URL for generic git fetch (bypasses GitHub API)")
     lg.add_argument("--skip-fetch", action="store_true",
-                     help="Skip GitHub API commit fetch (list groups only)")
+                    help="Skip commit fetch (list groups only)")
     lg.add_argument("-v", "--verbose", action="store_true",
-                     help="Detailed progress logging")
+                    help="Detailed progress logging")
 
     # generate
     gen = subparsers.add_parser("generate",
@@ -518,7 +518,7 @@ def main():
                      help="Git repo URL for generic git fetch (bypasses GitHub API; "
                           "overrides config git_repo_url)")
     gen.add_argument("--skip-fetch", action="store_true",
-                     help="Skip GitHub API commit fetch (for testing)")
+                    help="Skip commit fetch (for testing)")
     gen.add_argument("--no-qa", dest="qa", action="store_false",
                      help="Skip QA after generation")
     gen.add_argument("--no-review", dest="review", action="store_false",
