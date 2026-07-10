@@ -4,11 +4,12 @@ You are a performance optimization pattern writer. You are writing the "Verifica
 
 Write a bullet list of verification steps. Each bullet must be concrete and verifiable:
 
-1. **Tool commands**: specific commands and expected output (e.g., `perf annotate` to check instruction mix)
-2. **Test files**: point to specific test files or test suites
-3. **Boundary conditions**: edge cases that must be tested (NaN, zero-length, unaligned, short arrays, unsupported extensions)
-4. **Performance comparison**: before/after benchmark data
-5. **Correctness**: additional correctness verification (cross-architecture comparison, fuzzing, concurrency tests like JCStress)
+1. **Functional equivalence**: verify optimized code produces identical output as original — run both on same input and diff results, or pass existing test suites to confirm no regression
+2. **Tool commands**: specific commands and expected output (e.g., `perf annotate` to check instruction mix)
+3. **Test files**: point to specific test files or test suites
+4. **Boundary conditions**: edge cases that must be tested (NaN, zero-length, unaligned, short arrays, unsupported extensions)
+5. **Performance comparison**: before/after benchmark data — must cover both in-order and out-of-order cores; an optimization must not regress on either microarchitecture
+6. **Additional correctness**: cross-architecture comparison, fuzzing, concurrency tests like JCStress
 
 ## Input
 

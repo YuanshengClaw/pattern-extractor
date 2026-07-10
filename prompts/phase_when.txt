@@ -13,7 +13,6 @@ This section has EXACTLY three parts in order, separated by blank lines:
    - Use `- ` (dash + space) for each bullet — NOT `*`, NOT `+`, NOT numbers
     - Each bullet MUST start with a **tool name in backticks** as the first content after `- `
     - Correct: `- `perf annotate` shows high cache-miss rate in memcpy`
-    - Correct: `- `objdump -d` shows multi-instruction sequences`
     - Wrong: `* `perf annotate` shows...` (wrong bullet character)
     - Wrong: `-  Use `perf annotate` to see...` (text before backtick)
     - Wrong: `- 工具如 `perf annotate` 显示...` (Chinese before backtick)
@@ -52,19 +51,18 @@ Profile signals:
 
 ## Signal Diversity (CRITICAL)
 
-The Profile signals list must include **at least 5 signals** covering **at least 3 of these signal source categories**:
+The Profile signals list must include **at least 4 signals** covering **at least 3 of these signal source categories**:
 
 | Category | Tool examples |
 |---|---|
-| **Profiling / sampling** | `perf annotate`, `perf stat`, `perf record`, `pprof`, `flamegraph` |
+| **Profiling / sampling** | `perf annotate`, `perf stat`, `pprof`, `flamegraph` |
 | **Compiler / assembly output** | compiler flags like `-S`, `-print-after-all`, disassembly output |
-| **Binary / build-time analysis** | `objdump -d`, `readelf -A`, `size`, `nm`, `file` |
+| **Binary / build-time analysis** | `readelf -A`, `size`, `nm`, `file` |
 | **Source code inspection** | code patterns visible in source, `grep` for specific patterns, API usage patterns |
 | **Runtime / hwprobe / flags** | `hwprobe`, `/proc/cpuinfo`, `lscpu`, runtime flags that detect hardware features |
 
-Good coverage example (5 signals from 4 categories):
+Good coverage example (4 signals from 4 categories):
 - `- perf annotate` shows X in Y symbol (profiling)
-- `- objdump -d` shows multi-instruction sequences (binary analysis)
 - `- readelf -A` confirms extension/feature availability (binary analysis)
 - `- grep` finds source patterns matching the optimization target (source code)
 - `- lscpu` / `/proc/cpuinfo` confirms hardware supports required feature (runtime)
@@ -72,7 +70,6 @@ Good coverage example (5 signals from 4 categories):
 Bad coverage — all from the same category:
 - `- -perf annotate` shows ... (only perf)
 - `- perf stat` shows ... (only perf)
-- `- perf record` shows ... (only perf)
 
 ## Input
 
