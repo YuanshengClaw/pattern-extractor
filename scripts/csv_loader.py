@@ -25,9 +25,12 @@ from typing import Any
 
 # ── Data Structures ───────────────────────────────────────────────────────────
 
-# GitHub commit URL pattern: https://github.com/{owner}/{repo}/commit/{sha}
-COMMIT_URL_RE = re.compile(
-    r"https://github\.com/([^/]+)/([^/]+)/commit/([a-f0-9]+)"
+# Generic commit SHA pattern: any URL ending in /commit/{sha} or /-/commit/{sha}
+# Works for GitHub, GitLab, self-hosted Git instances, etc.
+COMMIT_SHA_RE = re.compile(r"/([a-f0-9]{7,40})$")
+# GitHub-specific: also extract owner/repo from the URL
+GITHUB_REPO_RE = re.compile(
+    r"https://github\.com/([^/]+)/([^/]+)"
 )
 
 
@@ -35,7 +38,7 @@ class CommitRow:
     """One row from the CSV: a commit + its optimization idea/thought."""
 
     __slots__ = ("commit_url", "owner", "repo", "sha",
-                 "idea", "thought", "correct", "why")
+                 "repo_url", "idea", "thought", "correct", "why")
 
     def __init__(self, commit_url: str, idea: str, thought: str,
                  correct: str = "", why: str = ""):
@@ -44,16 +47,36 @@ class CommitRow:
         self.thought = thought
         self.correct = correct
         self.why = why
-        # Parse URL
-        m = COMMIT_URL_RE.match(commit_url)
-        if m:
-            self.owner = m.group(1)
-            self.repo = m.group(2)
-            self.sha = m.group(3)
+        # Extract SHA from any commit URL (/commit/{sha} or /-/commit/{sha})
+        url_clean = commit_url.rstrip("/")
+        sha_m = COMMIT_SHA_RE.search(url_clean)
+        self.sha = sha_m.group(1) if sha_m else ""
+        # Extract owner/repo for GitHub (used by gh API and PR links)
+        gh_m = GITHUB_REPO_RE.match(commit_url)
+        if gh_m:
+            self.owner = gh_m.group(1)
+            self.repo = gh_m.group(2)
         else:
             self.owner = ""
             self.repo = ""
-            self.sha = ""
+        # Derive base repo URL for git clone (remove /commit/{sha} suffix)
+        self.repo_url = _extract_repo_base(url_clean)
+
+
+def _extract_repo_base(url: str) -> str:
+    """Extract the base repository URL from a commit URL.
+
+    Handles:
+      https://github.com/owner/repo/commit/{sha}  → https://github.com/owner/repo
+      https://code.ffmpeg.org/FFmpeg/FFmpeg/-/commit/{sha}
+        → https://code.ffmpeg.org/FFmpeg/FFmpeg
+    """
+    # Strip /-/commit/{sha} (GitLab) or /commit/{sha} (GitHub/others)
+    for pattern in (r"/-/commit/[a-f0-9]+$", r"/commit/[a-f0-9]+$"):
+        m = re.search(pattern, url)
+        if m:
+            return url[:m.start()]
+    return ""
 
 
 class GroupInfo:
@@ -282,12 +305,13 @@ def load_any(path: str, project_name: str = "") -> list[GroupInfo]:
 def groups_to_commit_dicts(groups: list[GroupInfo]) -> list[dict[str, Any]]:
     """Convert GroupInfo list to commit dicts compatible with compute_group_stats.
 
-    Returns list of { "url", "idea", "project", "thought", "owner", "repo", "sha" }
+    Returns list of { "url", "idea", "project", "thought", "owner", "repo",
+                      "sha", "repo_url" }
     """
     commits = []
     for group in groups:
         for row in group.rows:
-            commits.append({
+            d: dict[str, Any] = {
                 "url": row.commit_url,
                 "idea": row.idea,
                 "project": group.project,
@@ -295,5 +319,8 @@ def groups_to_commit_dicts(groups: list[GroupInfo]) -> list[dict[str, Any]]:
                 "owner": row.owner,
                 "repo": row.repo,
                 "sha": row.sha,
-            })
+            }
+            if row.repo_url:
+                d["repo_url"] = row.repo_url
+            commits.append(d)
     return commits
