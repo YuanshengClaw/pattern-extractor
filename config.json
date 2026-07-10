@@ -36,6 +36,7 @@
         "index_dir": "existing_patterns",
         "triggers_dir": "triggers"
     },
+    "git_repo_url": "",
     "project": {
         "name": "OpenJDK"
     }

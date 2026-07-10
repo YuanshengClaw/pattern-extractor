@@ -100,19 +100,22 @@ def _load_and_enrich(csv_path: str,
                      project_name: str = "",
                      skip_fetch: bool = False,
                      verbose: bool = False,
-                     rate_limit_delay: float = 0.3) -> list[dict]:
-    """Full pipeline: load CSV/xlsx → enrich commits via GitHub API.
+                     rate_limit_delay: float = 0.3,
+                     git_url: str = "") -> list[dict]:
+    """Full pipeline: load CSV/xlsx → enrich commits via GitHub API or generic git.
 
     Args:
         csv_path: Path to .csv or .xlsx file.
         project_name: Override project name (auto-detected from xlsx sheet name
                       or filename if empty).
-        skip_fetch: Skip GitHub API fetching (for testing / offline).
+        skip_fetch: Skip API fetching (for testing / offline).
         verbose: Print progress info.
+        git_url: If set, force all commits to use this repo URL for generic git
+                 fetch instead of GitHub API (clears owner/repo).
 
     Returns:
         List of enriched commit dicts (same shape as classified.json commits).
-        Each dict has: url, idea (category), message, diff, sha, owner, repo.
+        Each dict has: url, idea (category), message, diff, sha, owner, repo, repo_url.
     """
     if verbose:
         print(f"\n  Loading: {csv_path}")
@@ -138,7 +141,14 @@ def _load_and_enrich(csv_path: str,
     # Flatten to commit dicts
     commits = groups_to_commit_dicts(groups)
 
-    # Enrich with message + diff from GitHub
+    if git_url:
+        clean_url = git_url.rstrip("/")
+        for c in commits:
+            c["repo_url"] = clean_url
+            # Clear owner/repo so enrich_commits routes to generic git fetch
+            c.pop("owner", None)
+            c.pop("repo", None)
+
     if not skip_fetch:
         fetcher = CommitFetcher(rate_limit_delay=rate_limit_delay)
         start = time.time()
@@ -146,12 +156,12 @@ def _load_and_enrich(csv_path: str,
         elapsed = time.time() - start
         if verbose:
             s = fetcher.stats
-            print(f"  GitHub API: {s['fetched']} fetched, {s['cached']} cached, "
+            print(f"  Fetch stats: {s['fetched']} fetched, {s['cached']} cached, "
                   f"{s['errors']} errors ({elapsed:.1f}s)")
     else:
         # Skip fetch: set placeholder message for each commit
         if verbose:
-            print("  Skipping GitHub fetch (--skip-fetch)")
+            print("  Skipping commit fetch (--skip-fetch)")
         for c in commits:
             c["message"] = c.get("thought", c.get("url", ""))
             c["diff"] = ""
@@ -188,7 +198,8 @@ def _group_commits(commits: list[dict],
 
 def cmd_list_groups(args):
     """List PR groups from CSV/xlsx data."""
-    commits = _load_and_enrich(args.input, args.project, skip_fetch=args.skip_fetch, verbose=args.verbose)
+    git_url = getattr(args, "git_url", "")
+    commits = _load_and_enrich(args.input, args.project, skip_fetch=args.skip_fetch, verbose=args.verbose, git_url=git_url)
     if not commits:
         return
 
@@ -231,11 +242,13 @@ def cmd_generate(args):
 
     # Load and enrich
     project_name = args.project or config.get("project", {}).get("name", "")
+    git_url = getattr(args, "git_url", "") or config.get("git_repo_url", "")
     commits = _load_and_enrich(
         args.input, project_name,
         skip_fetch=args.skip_fetch,
         verbose=args.verbose,
         rate_limit_delay=rate_limit,
+        git_url=git_url,
     )
     if not commits:
         print("No commits loaded. Nothing to generate.")
@@ -479,10 +492,12 @@ def main():
                     help="CSV or xlsx file from rv-optkb-tool csv-review")
     lg.add_argument("--project", default="",
                     help="Project name (auto-detected from xlsx sheet or filename)")
+    lg.add_argument("-u", "--git-url", default="",
+                     help="Git repo URL for generic git fetch (bypasses GitHub API)")
     lg.add_argument("--skip-fetch", action="store_true",
-                    help="Skip GitHub API commit fetch (list groups only)")
+                     help="Skip GitHub API commit fetch (list groups only)")
     lg.add_argument("-v", "--verbose", action="store_true",
-                    help="Detailed progress logging")
+                     help="Detailed progress logging")
 
     # generate
     gen = subparsers.add_parser("generate",
@@ -499,6 +514,9 @@ def main():
     gen.add_argument("--group", help="Generate only groups matching this keyword")
     gen.add_argument("--max", type=int, default=0,
                      help="Max patterns to generate (0 = unlimited)")
+    gen.add_argument("-u", "--git-url", default="",
+                     help="Git repo URL for generic git fetch (bypasses GitHub API; "
+                          "overrides config git_repo_url)")
     gen.add_argument("--skip-fetch", action="store_true",
                      help="Skip GitHub API commit fetch (for testing)")
     gen.add_argument("--no-qa", dest="qa", action="store_false",
