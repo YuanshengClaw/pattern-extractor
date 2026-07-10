@@ -55,7 +55,7 @@ The Profile signals list must include **at least 4 signals** covering **at least
 
 | Category | Tool examples |
 |---|---|
-| **Profiling / sampling** | `perf annotate`, `perf stat`, `pprof`, `flamegraph` |
+| **Profiling / sampling** | `perf stat -e duration_time,task-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses,L1-dcache-loads,L1-dcache-load-misses,LLC-load-misses,LLC-loads,IPC,elapsed_ns,duration_s,cache_miss_rate,branch_miss_rate,L1_dcache_load_miss_rate,LLC_load_miss_rate`, `perf annotate`, `pprof`, `flamegraph` |
 | **Compiler / assembly output** | compiler flags like `-S`, `-print-after-all`, disassembly output |
 | **Binary / build-time analysis** | `readelf -A`, `size`, `nm`, `file` |
 | **Source code inspection** | code patterns visible in source, `grep` for specific patterns, API usage patterns |
